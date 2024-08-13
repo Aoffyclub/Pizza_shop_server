@@ -3,6 +3,7 @@ const sequelize = require("../config/database");
 const UserInfo = require("../models/userInfo");
 const Address = require("../models/address");
 const CartItem = require("../models/cart");
+const Image = require("../models/image")
 
 const User = sequelize.define("user", {
   user_id: {
@@ -49,5 +50,14 @@ CartItem.belongsTo(User, {
   foreignKey: "user_id",
   allowNull: false,
 });
+User.hasMany(Image, {
+  foreignKey: "user_id",
+  onDelete: "CASCADE",
+  allowNull: false,
+})
+Image.belongsTo(User, {
+  foreignKey: "user_id",
+  allowNull: false,
+})
 
 module.exports = User;

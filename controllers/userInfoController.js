@@ -1,5 +1,6 @@
 const UserInfo = require("../models/userInfo");
 const User = require("../models/user");
+const Image = require("../models/image");
 const jwt = require("jsonwebtoken");
 
 const createUserInfo = async (req, res) => {
@@ -45,30 +46,30 @@ const getUserInfo = async (req, res) => {
     const userId = decoded.user_id;
 
     // Fetch user info with associated user details
-    const userInfo = await UserInfo.findOne({
+    const userInfoDetail = await User.findOne({
       where: { user_id: userId },
-      include: [{ model: User, attributes: ["username"] }],
+      include: [
+        {
+          model: UserInfo,
+          attributes: ["firstName", "lastName", "email", "birth"],
+        },
+        { model: Image, attributes: ["profileImage"] },
+      ],
     });
 
-    if (!userInfo) {
+    if (!userInfoDetail) {
       return res.status(404).json({ error: "User info not found" });
     }
 
     // Construct the response object
     const response = {
-      username: userInfo.user.username,
-      firstName: userInfo.firstName,
-      lastName: userInfo.lastName,
-      image: userInfo.image,
-      email: userInfo.email,
-      birth: userInfo.birth,
-      createdAt: userInfo.createdAt,
-      updatedAt: userInfo.updatedAt,
+      username: userInfoDetail.username,
+      firstName: userInfoDetail.userinfo.firstName,
+      lastName: userInfoDetail.userinfo.lastName,
+      image: userInfoDetail.images[0].profileImage,
+      email: userInfoDetail.userinfo.email,
+      birth: userInfoDetail.userinfo.birth,
     };
-
-    // const userAll = await UserInfo.destroy({
-    //   where: { user_id: userId }
-    // })
 
     // Send the response
     res.status(200).json({
