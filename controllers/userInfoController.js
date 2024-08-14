@@ -1,6 +1,5 @@
 const UserInfo = require("../models/userInfo");
 const User = require("../models/user");
-const Image = require("../models/image");
 const jwt = require("jsonwebtoken");
 
 const createUserInfo = async (req, res) => {
@@ -51,9 +50,8 @@ const getUserInfo = async (req, res) => {
       include: [
         {
           model: UserInfo,
-          attributes: ["firstName", "lastName", "email", "birth"],
+          attributes: ["firstName", "lastName", "email", "birth", "image"],
         },
-        { model: Image, attributes: ["profileImage"] },
       ],
     });
 
@@ -66,7 +64,7 @@ const getUserInfo = async (req, res) => {
       username: userInfoDetail.username,
       firstName: userInfoDetail.userinfo.firstName,
       lastName: userInfoDetail.userinfo.lastName,
-      image: userInfoDetail.images[0].profileImage,
+      image: userInfoDetail.userinfo.image,
       email: userInfoDetail.userinfo.email,
       birth: userInfoDetail.userinfo.birth,
     };

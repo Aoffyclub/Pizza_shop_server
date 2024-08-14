@@ -1,4 +1,5 @@
-const Image = require("../models/image");
+// const Image = require("../models/image");
+const UserInfo = require("../models/userInfo");
 const jwt = require("jsonwebtoken");
 
 const createImage = async (req, res) => {
@@ -15,14 +16,17 @@ const createImage = async (req, res) => {
       profileImage = `/uploads/${req.file.filename}`;
     }
 
-    let user = await Image.findOne({ where: { user_id: userId } });
-    if (user) {
-      // Update user profile image
-      user.profileImage = profileImage;
+    let user =  await UserInfo.findOne({
+      where: { user_id: userId },
+      
+    });
+    if (!user) {
+      return res
+       .status(404)
+       .json({ message: "User not found" });
+    }else {
+      user.image = profileImage;
       await user.save();
-    } else {
-      // Create a new image entry
-      user = await Image.create({ user_id: userId, profileImage });
     }
 
     res.status(200).json({ message: "Profile saved successfully", user });
