@@ -1,15 +1,15 @@
 const { DataTypes } = require("sequelize");
 const sequelize = require("../config/database");
-const CartItem = require("../models/cart");
 
 const Products = sequelize.define("product", {
   category_id: {
     type: DataTypes.STRING(50),
     allowNull: false,
   },
-  item_id: {
-    type: DataTypes.STRING(10),
-    allowNull: false,
+  product_id: {
+    type: DataTypes.INTEGER,
+    primaryKey: true,
+    autoIncrement: true,
   },
   name: {
     type: DataTypes.STRING(50),
@@ -29,11 +29,4 @@ const Products = sequelize.define("product", {
   },
 });
 
-Products.hasMany(CartItem, {
-  foreignKey: "item_id",
-});
-
-CartItem.belongsTo(Products, {
-  foreignKey: "item_id",
-});
 module.exports = Products;

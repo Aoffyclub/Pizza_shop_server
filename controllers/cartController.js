@@ -1,21 +1,23 @@
-const CartItem = require("../models/cart");
+const { CartItem, Products } = require("../models/associations");
 const jwt = require("jsonwebtoken");
-const Products = require("../models/product");
 
 const addProductToCart = async (req, res) => {
-  const { item_id, quantity } = req.body;
+  const { product_id, quantity } = req.body;
   const token =
     req.headers["authorization"] && req.headers["authorization"].split(" ")[1];
 
   const decoded = jwt.verify(token, "pizza");
   const userId = decoded.user_id;
 
+  console.log(req.body);
+  
+
   try {
     // Check if item exists in the cart
     const existingCartItems = await CartItem.findOne({
       where: {
         user_id: userId,
-        item_id: item_id,
+        product_id,
       },
     });
 
@@ -24,7 +26,7 @@ const addProductToCart = async (req, res) => {
       await existingCartItems.update({
         quantity: parseFloat(existingCartItems.quantity) + parseFloat(quantity),
         userId,
-        item_id,
+        product_id,
       });
       res.json({
         message: "Product quantity updated successfully",
@@ -32,7 +34,7 @@ const addProductToCart = async (req, res) => {
     } else {
       await CartItem.create({
         user_id: userId,
-        item_id,
+        product_id,
         quantity,
       });
       res.json({
@@ -66,7 +68,7 @@ const getCartItems = async (req, res) => {
 
       cartItems.forEach((data) => {
         response.push({
-          item_id: data.item_id,
+          product_id: data.product_id,
           name: data.product.name,
           price: parseFloat(data.product.price),
           imageUrl: data.product.imageUrl,
@@ -89,7 +91,7 @@ const getCartItems = async (req, res) => {
 };
 
 const removeProductFromCart = async (req, res) => {
-  const { item_id } = req.body;
+  const { product_id } = req.body;
   const token =
     req.headers["authorization"] && req.headers["authorization"].split(" ")[1];
 
@@ -99,13 +101,11 @@ const removeProductFromCart = async (req, res) => {
     await CartItem.destroy({
       where: {
         user_id: userId,
-        item_id: item_id,
+        product_id,
       },
     });
     res.json({ message: "Remove a product from cart successfully" });
-
-  }
-  catch (error) {
+  } catch (error) {
     res.status(400).json({ error: error.errors.map((err) => err.message) });
   }
 };

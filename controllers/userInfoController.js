@@ -1,8 +1,7 @@
-const UserInfo = require("../models/userInfo");
-const User = require("../models/user");
+const { User, UserInfo } = require("../models/associations");
 const jwt = require("jsonwebtoken");
 
-const createUserInfo = async (req, res) => {
+const updateUserInfo = async (req, res) => {
   const { firstName, lastName, image, email, birth } = req.body;
 
   const token =
@@ -12,23 +11,23 @@ const createUserInfo = async (req, res) => {
     const decoded = jwt.verify(token, "pizza");
     const userId = decoded.user_id;
 
-    const [userInfo, created] = await UserInfo.upsert({
-      user_id: userId,
-      firstName,
-      lastName,
-      image,
-      email,
-      birth,
-    });
+    const [affectedRows] = await UserInfo.update(
+      { firstName, lastName, email, birth },
+      { where: { user_id: userId } }
+    );
+
+    if (affectedRows === 0) {
+      return res.status(404).json({ error: "User not found" });
+    }
 
     res.status(200).json({
-      data: userInfo,
-      message: created
-        ? "User info created successfully"
-        : "User info updated successfully",
+      message: "User info updated successfully",
     });
   } catch (error) {
-    res.status(401).json({ error: "Invalid token" });
+    res.status(401).json({
+      data: error,
+      error: "Invalid token",
+    });
   }
 };
 
@@ -83,4 +82,4 @@ const getUserInfo = async (req, res) => {
   }
 };
 
-module.exports = { createUserInfo, getUserInfo };
+module.exports = { updateUserInfo, getUserInfo };

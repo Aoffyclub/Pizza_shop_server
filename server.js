@@ -40,7 +40,7 @@ app.get("/", (req, res) => {
 app.listen(PORT, async () => {
   try {
     await sequelize.authenticate(); // ทดสอบการเชื่อมต่อฐานข้อมูล
-    await sequelize.sync(); // สร้างตารางในฐานข้อมูลหากยังไม่มี
+    await sequelize.sync({ alter : true}); // สร้างตารางในฐานข้อมูลหากยังไม่มี
 
     console.log(
       `Tables synchronized with database. And Server is running on port ${PORT}`

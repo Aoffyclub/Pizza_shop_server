@@ -1,4 +1,4 @@
-const Product = require("../models/product");
+const { Products} = require("../models/associations");
 
 const createProduct = async (req, res) => {
   const { category_id, name, description, price, imageUrl } = req.body;
@@ -8,13 +8,13 @@ const createProduct = async (req, res) => {
   }
 
   try {
-    const maxItemIdResult = await Product.max("item_id");
+    const maxItemIdResult = await Products.max("product_id");
     const newItemId = maxItemIdResult ? parseFloat(maxItemIdResult) + 1 : 1;
    
-    const product = await Product.create({
+    const product = await Products.create({
       category_id,
       name,
-      item_id: newItemId,
+      product_id: newItemId,
       description,
       price,
       imageUrl,
@@ -31,7 +31,7 @@ const createProduct = async (req, res) => {
 
 const getAllProducts = async (req, res) => {
   try {
-    const products = await Product.findAll({});
+    const products = await Products.findAll({});
     res.status(200).json({ data: products });
   } catch (error) {
     res.status(400).json({ error: error.message });

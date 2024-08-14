@@ -1,4 +1,4 @@
-const Address = require("../models/address");
+const {Address} = require("../models/associations");
 const jwt = require("jsonwebtoken");
 
 const createAddress = async (req, res) => {
@@ -17,7 +17,6 @@ const createAddress = async (req, res) => {
       province,
       zipCode,
       phoneNumber,
-      default: true,
     });
 
     res.json({

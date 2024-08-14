@@ -1,5 +1,5 @@
-// const Image = require("../models/image");
-const UserInfo = require("../models/userInfo");
+
+const { UserInfo} = require("../models/associations");
 const jwt = require("jsonwebtoken");
 
 const createImage = async (req, res) => {
@@ -16,20 +16,16 @@ const createImage = async (req, res) => {
       profileImage = `/uploads/${req.file.filename}`;
     }
 
-    let user =  await UserInfo.findOne({
-      where: { user_id: userId },
-      
-    });
-    if (!user) {
-      return res
-       .status(404)
-       .json({ message: "User not found" });
-    }else {
-      user.image = profileImage;
-      await user.save();
+    const [affectedRows] = await UserInfo.update(
+      { image: profileImage },
+      { where: { user_id: userId } }
+    );
+
+    if (affectedRows === 0) {
+      return res.status(404).json({ error: "User not found" });
     }
 
-    res.status(200).json({ message: "Profile saved successfully", user });
+    res.status(200).json({ message: "Profile saved successfully"});
   } catch (err) {
     res
       .status(500)
