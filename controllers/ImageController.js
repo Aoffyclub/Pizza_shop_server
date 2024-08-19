@@ -1,5 +1,4 @@
-
-const { UserInfo} = require("../models/associations");
+const { UserInfo } = require("../models/associations");
 const jwt = require("jsonwebtoken");
 
 const createImage = async (req, res) => {
@@ -25,7 +24,7 @@ const createImage = async (req, res) => {
       return res.status(404).json({ error: "User not found" });
     }
 
-    res.status(200).json({ message: "Profile saved successfully"});
+    res.status(200).json({ message: "Profile saved successfully" });
   } catch (err) {
     res
       .status(500)
@@ -33,4 +32,17 @@ const createImage = async (req, res) => {
   }
 };
 
-module.exports = { createImage };
+const creatProductImage = (req, res) => {
+  const imageUrl = `/uploads/product/${req.file.filename}`;
+  res.status(200).send({
+    imageUrl: imageUrl,
+    message: "Upload product image successfully!",
+  });
+  if (!req.file) {
+    res
+      .status(200)
+      .json({ message: "Upload product image fail", error: err.message });
+  }
+};
+
+module.exports = { createImage, creatProductImage };

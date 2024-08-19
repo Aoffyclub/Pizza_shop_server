@@ -1,12 +1,19 @@
 const express = require("express");
 const sequelize = require("./config/database");
 const cors = require("cors");
+
 const fs = require("fs");
 const path = require("path");
+const uploadsDir = path.join(__dirname, "uploads");
+const productDir = path.join(uploadsDir, "product");
 
-const dir = path.join(__dirname, "uploads");
-if (!fs.existsSync(dir)) {
-  fs.mkdirSync(dir);
+if (!fs.existsSync(uploadsDir)) {
+  fs.mkdirSync(uploadsDir);
+}
+
+// Create 'uploads/product' directory if it doesn't exist
+if (!fs.existsSync(productDir)) {
+  fs.mkdirSync(productDir);
 }
 
 
@@ -25,13 +32,14 @@ const addressRoutes = require("./routes/addressRoutes");
 const productRoutes = require("./routes/productRoutes");
 const cartRoutes = require("./routes/cartRoutes");
 const ImageRoutes = require("./routes/imageRoutes");
+const adminRoutes = require("./routes/addminRoutes");
 
 app.use(userRoutes);
 app.use(addressRoutes);
 app.use(productRoutes);
 app.use(cartRoutes);
 app.use(ImageRoutes);
-
+app.use(adminRoutes);
 
 app.get("/", (req, res) => {
   res.send("Server is running on port " + PORT);
@@ -40,7 +48,7 @@ app.get("/", (req, res) => {
 app.listen(PORT, async () => {
   try {
     await sequelize.authenticate(); // ทดสอบการเชื่อมต่อฐานข้อมูล
-    await sequelize.sync({ alter : true}); // สร้างตารางในฐานข้อมูลหากยังไม่มี
+    await sequelize.sync(); // สร้างตารางในฐานข้อมูลหากยังไม่มี
 
     console.log(
       `Tables synchronized with database. And Server is running on port ${PORT}`
