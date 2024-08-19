@@ -82,4 +82,35 @@ const getUserInfo = async (req, res) => {
   }
 };
 
-module.exports = { updateUserInfo, getUserInfo };
+const getAllUsers = async (req, res) => {
+  try {
+    const users = await User.findAll({
+      include: [
+        {
+          model: UserInfo,
+          attributes: ["firstName", "lastName", "email", "birth", "image"],
+        },
+      ],
+    });
+    if (users.length === 0) {
+      return res.json({ data: [], message: "No users found" });
+    } else {
+      res.json({
+        data: users.map((user) => ({
+          username: user.username,
+          user_id: user.user_id,
+          firstName: user.userinfo.firstName,
+          lastName: user.userinfo.lastName,
+          image: user.userinfo.image,
+          email: user.userinfo.email,
+          birth: user.userinfo.birth,
+        })),
+        message: "Get all users success",
+      });
+    }
+  } catch (error) {
+    res.status(500).json({ error: "Internal server error" });
+  }
+};
+
+module.exports = { updateUserInfo, getUserInfo, getAllUsers };

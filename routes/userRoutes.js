@@ -8,6 +8,7 @@ const {
 const {
   updateUserInfo,
   getUserInfo,
+  getAllUsers
 } = require("../controllers/userInfoController");
 const authenticate = require("../middleware/middleware");
 
@@ -16,5 +17,6 @@ router.post("/api/login", login);
 router.post("/api/userInfo", authenticate, updateUserInfo);
 router.delete("/api/user", authenticate, deleteUser);
 router.get("/api/userInfo", authenticate, getUserInfo);
+router.get("/api/users", authenticate, getAllUsers);
 
 module.exports = router;
