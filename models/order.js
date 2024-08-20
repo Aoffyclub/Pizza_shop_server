@@ -1,7 +1,6 @@
 const { DataTypes } = require("sequelize");
 const sequelize = require("../config/database");
 const User = require("./user");
-const Products = require("./product");
 const Address = require("./address");
 
 const Order = sequelize.define("order", {
@@ -17,14 +16,6 @@ const Order = sequelize.define("order", {
       key: "user_id",
     },
     allowNull: false,
-  },
-  product_id: {
-    type: DataTypes.INTEGER,
-    allowNull: false,
-    references: {
-      model: Products,
-      key: "product_id",
-    },
   },
   address_id: {
     type: DataTypes.INTEGER,
