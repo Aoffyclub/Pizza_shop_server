@@ -33,6 +33,7 @@ const productRoutes = require("./routes/productRoutes");
 const cartRoutes = require("./routes/cartRoutes");
 const ImageRoutes = require("./routes/imageRoutes");
 const adminRoutes = require("./routes/addminRoutes");
+const orderRoutes = require("./routes/orderRoutes");
 
 app.use(userRoutes);
 app.use(addressRoutes);
@@ -40,6 +41,7 @@ app.use(productRoutes);
 app.use(cartRoutes);
 app.use(ImageRoutes);
 app.use(adminRoutes);
+app.use(orderRoutes);
 
 app.get("/", (req, res) => {
   res.send("Server is running on port " + PORT);
