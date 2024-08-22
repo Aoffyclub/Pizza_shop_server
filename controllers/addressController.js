@@ -1,4 +1,4 @@
-const {Address} = require("../models/associations");
+const { Address } = require("../models/associations");
 const jwt = require("jsonwebtoken");
 
 const createAddress = async (req, res) => {
@@ -53,7 +53,6 @@ const deleteUserAddress = async (req, res) => {
   const userId = decoded.user_id;
 
   console.log(req.body);
-  
 
   try {
     const result = await Address.destroy({
@@ -68,4 +67,30 @@ const deleteUserAddress = async (req, res) => {
   }
 };
 
-module.exports = { createAddress, getUserAddress, deleteUserAddress };
+const updateAddress = async (req, res) => {
+  const { id, address, city, province, zipCode, phoneNumber } = req.body;
+  const token =
+    req.headers["authorization"] && req.headers["authorization"].split(" ")[1];
+  const decoded = jwt.verify(token, "pizza");
+  const userId = decoded.user_id;
+
+  try {
+    const user_address = await Address.update(
+      { address, city, province, zipCode, phoneNumber },
+      { where: { id: id, user_id: userId } }
+    );
+    res.json({
+      data: user_address,
+      message: "Updated user address successfully",
+    });
+  } catch (error) {
+    res.status(400).json({ error: error.errors.map((err) => err.message) });
+  }
+};
+
+module.exports = {
+  createAddress,
+  getUserAddress,
+  deleteUserAddress,
+  updateAddress,
+};

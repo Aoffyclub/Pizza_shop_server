@@ -24,7 +24,7 @@ app.use(cors());
 app.use("/uploads", express.static("./uploads"));
 
 
-const PORT = 3000;
+const PORT = 2000;
 
 // Routes
 const userRoutes = require("./routes/userRoutes");
