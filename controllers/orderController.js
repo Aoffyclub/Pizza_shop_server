@@ -6,6 +6,7 @@ const {
   Products,
   CartItem,
   Address,
+  User
 } = require("../models/associations");
 const Admin = require("../models/admin");
 const { v4: uuidv4 } = require("uuid");
@@ -195,6 +196,53 @@ const getAllOrder = async (req, res) => {
   }
 };
 
+const reportData = async (req, res) => {
+  const token =
+    req.headers["authorization"] && req.headers["authorization"].split(" ")[1];
+  try {
+    const decoded = jwt.verify(token, "pizza");
+    const adminId = decoded.admin_id;
+
+    if (adminId) {
+      // Fix the if condition to check for adminId
+      const admin = await Admin.findByPk(adminId);
+      if (!admin) {
+        return res.status(401).json({ message: "Unauthorized" });
+      }
+
+      const orders = await Order.findAll({});
+      const totalOrders = orders.length;
+
+      let getTotalPrice = 0
+      orders.forEach((order) => {
+        getTotalPrice += order.totalPrice;
+      });
+
+      const users = await User.findAll({})
+      const totalUsers = users.length;
+
+      const products = await Products.findAll({})
+      const totalProducts = products.length;
+
+      let response = {
+        totalOrders: totalOrders,
+        totalPrice: getTotalPrice,
+        totalUsers: totalUsers,
+        totalProducts: totalProducts,
+       
+      } 
+
+
+
+      res.json({ data: response, message: "Get report successfully" });
+    } else {
+      return res.status(401).json({ message: "Unauthorized" });
+    }
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+}
+
 module.exports = {
   createOrder,
   getOrders,
@@ -202,4 +250,5 @@ module.exports = {
   paymentOrder,
   cancelOrder,
   getAllOrder,
+  reportData
 };
