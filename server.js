@@ -1,6 +1,8 @@
 const express = require("express");
 const sequelize = require("./config/database");
 const cors = require("cors");
+const swaggerUi = require("swagger-ui-express");
+const swaggerJsdoc = require("swagger-jsdoc");
 
 const fs = require("fs");
 const path = require("path");
@@ -16,10 +18,10 @@ if (!fs.existsSync(productDir)) {
   fs.mkdirSync(productDir);
 }
 
-
 const app = express();
 app.use(express.json());
 app.use(cors());
+
 
 app.use("/uploads", express.static("./uploads"));
 
@@ -42,6 +44,27 @@ app.use(cartRoutes);
 app.use(ImageRoutes);
 app.use(adminRoutes);
 app.use(orderRoutes);
+
+// Swagger Options
+const swaggerOptions = {
+  definition: {
+    openapi: "3.0.0",
+    info: {
+      title: "Pizza Shop API",
+      version: "1.0.0",
+      description: "API for documenting a pizza shop",
+    },
+    servers: [
+      {
+        url: "http://localhost:2000",
+      },
+    ],
+  },
+  apis: ["./routes/*.js"], // Point to the route files for Swagger to generate docs
+};
+
+const swaggerSpec = swaggerJsdoc(swaggerOptions)
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 app.get("/", (req, res) => {
   res.send("Server is running on port " + PORT);

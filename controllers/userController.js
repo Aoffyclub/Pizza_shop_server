@@ -1,4 +1,4 @@
-const { User, UserInfo } = require("../models/associations")
+const { User, UserInfo } = require("../models/associations");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
 
