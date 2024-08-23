@@ -42,7 +42,6 @@ const authenticate = require("../middleware/middleware");
  */
 
 router.post("/api/user", createUser);
-
 router.post("/api/login", login);
 router.post("/api/userInfo", authenticate, updateUserInfo);
 router.delete("/api/user", authenticate, deleteUser);
